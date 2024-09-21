@@ -1,7 +1,7 @@
 #!/bin/bash
 
 if [ -z "$1" ]; then
-    echo "Please specify the brightness adjustment step (from 1 to 99)."
+    echo "Please specify the brightness adjustment step (from 1 to 99). For example: ./setup.sh 5"
     exit 1
 fi
 
@@ -18,7 +18,7 @@ DECREASE_SCRIPT="/usr/local/bin/decrease_brightness.sh"
 # Create the increase brightness script
 sudo bash -c "cat > $INCREASE_SCRIPT" << EOF
 #!/bin/bash
-CURRENT_BRIGHTNESS=\$(ddcutil getvcp 10 | grep -oP '(?<=current value =\\s+)\\d+')
+CURRENT_BRIGHTNESS=\$(sudo ddcutil getvcp 10 | grep -oP 'current value =\s+\K\d+')
 NEW_BRIGHTNESS=\$((CURRENT_BRIGHTNESS + $INCREMENT))
 if [ \$NEW_BRIGHTNESS -le 100 ]; then
     ddcutil setvcp 10 \$NEW_BRIGHTNESS
@@ -30,7 +30,7 @@ EOF
 # Create the decrease brightness script
 sudo bash -c "cat > $DECREASE_SCRIPT" << EOF
 #!/bin/bash
-CURRENT_BRIGHTNESS=\$(ddcutil getvcp 10 | grep -oP '(?<=current value =\\s+)\\d+')
+CURRENT_BRIGHTNESS=\$(sudo ddcutil getvcp 10 | grep -oP 'current value =\s+\K\d+')
 NEW_BRIGHTNESS=\$((CURRENT_BRIGHTNESS - $INCREMENT))
 if [ \$NEW_BRIGHTNESS -ge 0 ]; then
     ddcutil setvcp 10 \$NEW_BRIGHTNESS
